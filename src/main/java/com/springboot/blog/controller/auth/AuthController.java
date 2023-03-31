@@ -1,4 +1,4 @@
-package com.springboot.blog.controller;
+package com.springboot.blog.controller.auth;
 import com.springboot.blog.payload.JWTAuthResponse;
 import com.springboot.blog.payload.LoginDto;
 import com.springboot.blog.payload.RegisterDto;
