@@ -4,6 +4,8 @@ import com.springboot.blog.payload.PostDto;
 import com.springboot.blog.payload.PostResponse;
 import com.springboot.blog.service.PostService;
 import com.springboot.blog.utils.AppConstants;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +15,7 @@ import javax.validation.Valid;
 
 import java.util.List;
 
+@Api(value = "CRUD Rest APIs for Post resources")
 @RestController
 @RequestMapping()
 public class PostController {
@@ -23,6 +26,7 @@ public class PostController {
         this.postService = postService;
     }
 
+    @ApiOperation(value = "Create Post REST API")
     // create blog post rest api
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/api/v1/posts")
@@ -30,6 +34,7 @@ public class PostController {
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
 
+    @ApiOperation(value = "Get All Posts REST API")
     // get all posts rest api
     @GetMapping("/api/v1/posts")
     public PostResponse getAllPosts(
@@ -41,12 +46,14 @@ public class PostController {
         return postService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
     }
 
+    @ApiOperation(value = "Get Post By Id REST API")
     // get post by id
     @GetMapping(value = "/api/v1/posts/{id}")
     public ResponseEntity<PostDto> getPostById(@PathVariable(name = "id") long id){
         return ResponseEntity.ok(postService.getPostById(id));
     }
 
+    @ApiOperation(value = "Update Post By Id REST API")
     // update post by id rest api
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/api/v1/posts/{id}")
@@ -57,6 +64,8 @@ public class PostController {
        return new ResponseEntity<>(postResponse, HttpStatus.OK);
     }
 
+
+    @ApiOperation(value = "Delete Post By Id REST API")
     // delete post rest api
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/api/v1/posts/{id}")
@@ -67,6 +76,9 @@ public class PostController {
         return new ResponseEntity<>("Post entity deleted successfully.", HttpStatus.OK);
     }
 
+
+
+    @ApiOperation(value = "Get Posts by Category REST API")
     // Build Get Posts by Category REST API
     // http://localhost:8080/api/posts/category/3
     @GetMapping("/api/v1/posts/category/{id}")
