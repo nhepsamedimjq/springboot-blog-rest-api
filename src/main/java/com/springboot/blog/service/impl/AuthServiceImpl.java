@@ -29,12 +29,12 @@ public class AuthServiceImpl implements AuthService {
     private PasswordEncoder passwordEncoder;
     private JwtTokenProvider jwtTokenProvider;
 
-
     public AuthServiceImpl(AuthenticationManager authenticationManager,
-                           UserRepository userRepository,
-                           RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder,
-                           JwtTokenProvider jwtTokenProvider) {
+                       UserRepository userRepository,
+                       RoleRepository roleRepository,
+                       PasswordEncoder passwordEncoder,
+                       JwtTokenProvider jwtTokenProvider
+                       ){
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -42,12 +42,11 @@ public class AuthServiceImpl implements AuthService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+
     @Override
-    public String login(LoginDto loginDto) {
-
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginDto.getUsernameOrEmail(), loginDto.getPassword()));
-
+    public String login(LoginDto loginDto){
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginDto.getUsernameOrEmail(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String token = jwtTokenProvider.generateToken(authentication);
@@ -55,9 +54,9 @@ public class AuthServiceImpl implements AuthService {
         return token;
     }
 
-    @Override
-    public String register(RegisterDto registerDto) {
 
+    @Override
+    public String register(RegisterDto registerDto){
         // add check for username exists in database
         if(userRepository.existsByUsername(registerDto.getUsername())){
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Username is already exists!.");
@@ -65,7 +64,7 @@ public class AuthServiceImpl implements AuthService {
 
         // add check for email exists in database
         if(userRepository.existsByEmail(registerDto.getEmail())){
-            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Email is already exists!.");
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Email is already exist!.");
         }
 
         User user = new User();
@@ -75,12 +74,13 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
 
         Set<Role> roles = new HashSet<>();
+
         Role userRole = roleRepository.findByName("ROLE_USER").get();
         roles.add(userRole);
         user.setRoles(roles);
-
         userRepository.save(user);
-
         return "User registered successfully!.";
     }
+
+
 }
